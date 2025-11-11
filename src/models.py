@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 from transformers import GPT2Model, GPT2Config
+from transformers import Qwen2Model, Qwen2Config
 from tqdm import tqdm
 from sklearn.svm import LinearSVC
 from sklearn.linear_model import LogisticRegression, Lasso
@@ -14,6 +15,14 @@ from base_models import NeuralNetwork, ParallelNetworks
 def build_model(conf):
     if conf.family == "gpt2":
         model = TransformerModel(
+            n_dims=conf.n_dims,
+            n_positions=conf.n_positions,
+            n_embd=conf.n_embd,
+            n_layer=conf.n_layer,
+            n_head=conf.n_head,
+        )
+    elif conf.family == "qwen2.5":
+        model = Qwen2TransformerModel(
             n_dims=conf.n_dims,
             n_positions=conf.n_positions,
             n_embd=conf.n_embd,
@@ -96,6 +105,58 @@ class TransformerModel(nn.Module):
         self.n_dims = n_dims
         self._read_in = nn.Linear(n_dims, n_embd)
         self._backbone = GPT2Model(configuration)
+        self._read_out = nn.Linear(n_embd, 1)
+
+    @staticmethod
+    def _combine(xs_b, ys_b):
+        """Interleaves the x's and the y's into a single sequence."""
+        bsize, points, dim = xs_b.shape
+        ys_b_wide = torch.cat(
+            (
+                ys_b.view(bsize, points, 1),
+                torch.zeros(bsize, points, dim - 1, device=ys_b.device),
+            ),
+            axis=2,
+        )
+        zs = torch.stack((xs_b, ys_b_wide), dim=2)
+        zs = zs.view(bsize, 2 * points, dim)
+        return zs
+
+    def forward(self, xs, ys, inds=None):
+        if inds is None:
+            inds = torch.arange(ys.shape[1])
+        else:
+            inds = torch.tensor(inds)
+            if max(inds) >= ys.shape[1] or min(inds) < 0:
+                raise ValueError("inds contain indices where xs and ys are not defined")
+        zs = self._combine(xs, ys)
+        embeds = self._read_in(zs)
+        output = self._backbone(inputs_embeds=embeds).last_hidden_state
+        prediction = self._read_out(output)
+        return prediction[:, ::2, 0][:, inds]  # predict only on xs
+
+
+class Qwen2TransformerModel(nn.Module):
+    def __init__(self, n_dims, n_positions, n_embd=128, n_layer=12, n_head=4):
+        super(Qwen2TransformerModel, self).__init__()
+        configuration = Qwen2Config(
+            vocab_size=1,  # We're using embeddings directly, not tokens
+            hidden_size=n_embd,
+            intermediate_size=n_embd * 4,  # Standard ratio for transformers
+            num_hidden_layers=n_layer,
+            num_attention_heads=n_head,
+            num_key_value_heads=n_head,  # Qwen2 uses grouped-query attention
+            max_position_embeddings=2 * n_positions,
+            attention_dropout=0.0,
+            hidden_dropout=0.0,
+            use_cache=False,
+        )
+        self.name = f"qwen2.5_embd={n_embd}_layer={n_layer}_head={n_head}"
+
+        self.n_positions = n_positions
+        self.n_dims = n_dims
+        self._read_in = nn.Linear(n_dims, n_embd)
+        self._backbone = Qwen2Model(configuration)
         self._read_out = nn.Linear(n_embd, 1)
 
     @staticmethod

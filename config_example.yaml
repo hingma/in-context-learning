@@ -2,7 +2,7 @@
 # This file shows all available options and their default values
 
 model:
-  family: gpt2  # Options: gpt2, lstm
+  family: gpt2  # Options: gpt2, qwen2.5, lstm
   n_positions: 256  # Maximum context length
   n_dims: 20  # Latent dimension
   n_embd: 256  # Embedding dimension

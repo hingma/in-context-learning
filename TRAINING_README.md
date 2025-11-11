@@ -62,19 +62,24 @@ python src/train.py \
 
 ### Examples
 
-**Basic training:**
+**Basic training (GPT-2):**
 ```bash
-python src/train.py --config configs/linear_regression.yaml --out_dir ./outputs
+python src/train.py --config src/conf/linear_regression.yaml --out_dir ./outputs
+```
+
+**Training with Qwen2.5:**
+```bash
+python src/train.py --config src/conf/qwen2.5_example.yaml --out_dir ./outputs
 ```
 
 **Test run (100 steps):**
 ```bash
-python src/train.py --config configs/linear_regression.yaml --out_dir ./outputs --test_run
+python src/train.py --config src/conf/linear_regression.yaml --out_dir ./outputs --test_run
 ```
 
 **Resume training:**
 ```bash
-python src/train.py --config configs/linear_regression.yaml --out_dir ./outputs --resume_id <uuid>
+python src/train.py --config src/conf/linear_regression.yaml --out_dir ./outputs --resume_id <uuid>
 ```
 
 ## Google Colab Training
@@ -114,13 +119,26 @@ The notebook includes:
 
 ```yaml
 model:
-  family: gpt2              # Model type: 'gpt2' or 'lstm'
+  family: gpt2              # Model type: 'gpt2', 'qwen2.5', or 'lstm'
   n_positions: 256          # Maximum sequence length
   n_dims: 20                # Latent dimension
   n_embd: 256               # Embedding dimension
   n_layer: 12               # Number of layers
-  n_head: 8                 # Number of attention heads (GPT-2 only)
+  n_head: 8                 # Number of attention heads (Transformer models only)
 ```
+
+#### Available Model Families
+
+1. **gpt2**: GPT-2 architecture (decoder-only transformer)
+   - Standard configuration for in-context learning
+   - Well-tested and documented
+
+2. **qwen2.5**: Qwen2.5 architecture (modern decoder-only transformer)
+   - Based on Qwen2.5-0.5B model
+   - Includes grouped-query attention
+   - See `src/conf/qwen2.5_example.yaml` for example configuration
+   
+3. **lstm**: LSTM-based architecture (not yet implemented)
 
 ### Training Configuration
 

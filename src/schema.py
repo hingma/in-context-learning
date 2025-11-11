@@ -18,7 +18,7 @@ SCHEMA_DOC = """
 Configuration Structure:
 
 model:
-  family: str (gpt2 or lstm)
+  family: str (gpt2, qwen2.5, or lstm)
   n_positions: int  # maximum context length
   n_dims: int  # latent dimension
   n_embd: int  # embedding dimension
