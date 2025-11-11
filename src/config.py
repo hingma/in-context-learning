@@ -34,7 +34,7 @@ def validate_config(config: Dict[str, Any]) -> None:
     # Model validation
     model = config["model"]
     assert "family" in model, "Missing 'family' in model config"
-    assert model["family"] in ["gpt2", "lstm"], f"Invalid model family: {model['family']}"
+    assert model["family"] in ["gpt2", "qwen2.5", "lstm"], f"Invalid model family: {model['family']}"
     assert "n_positions" in model, "Missing 'n_positions' in model config"
     assert "n_dims" in model, "Missing 'n_dims' in model config"
     assert "n_embd" in model, "Missing 'n_embd' in model config"
