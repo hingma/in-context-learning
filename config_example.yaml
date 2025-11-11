@@ -1,0 +1,44 @@
+# Example configuration file for in-context learning training
+# This file shows all available options and their default values
+
+model:
+  family: gpt2  # Options: gpt2, lstm
+  n_positions: 256  # Maximum context length
+  n_dims: 20  # Latent dimension
+  n_embd: 256  # Embedding dimension
+  n_layer: 12  # Number of layers
+  n_head: 8  # Number of attention heads
+
+training:
+  task: linear_regression  # Options: linear_regression, sparse_linear_regression, 
+                           # linear_classification, relu_2nn_regression, decision_tree
+  task_kwargs: {}  # Task-specific keyword arguments
+  num_tasks: null  # Number of tasks (null = unlimited)
+  num_training_examples: null  # Number of training examples (null = unlimited)
+  data: gaussian  # Data distribution (currently only gaussian is supported)
+  batch_size: 64  # Batch size for training
+  learning_rate: 0.0003  # Learning rate (3e-4)
+  train_steps: 1000  # Total number of training steps
+  save_every_steps: 1000  # Checkpoint frequency
+  keep_every_steps: -1  # Permanent checkpoint frequency (-1 = disabled)
+  resume_id: null  # Resume from specific run ID (null = start fresh)
+  
+  curriculum:
+    dims:
+      start: 5  # Initial number of dimensions
+      end: 20  # Final number of dimensions
+      inc: 1  # Increment per update
+      interval: 100  # Update every N steps
+    points:
+      start: 10  # Initial number of points
+      end: 41  # Final number of points
+      inc: 1  # Increment per update
+      interval: 100  # Update every N steps
+
+wandb:
+  project: in-context-training  # Weights & Biases project name
+  entity: in-context  # Weights & Biases entity/team name
+  notes: ""  # Notes for this run
+  name: null  # Run name (null = auto-generated)
+  log_every_steps: 10  # Logging frequency
+

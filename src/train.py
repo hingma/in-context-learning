@@ -2,7 +2,6 @@ import os
 from random import randint
 import uuid
 
-from quinine import QuinineArgumentParser
 from tqdm import tqdm
 import torch
 import yaml
@@ -11,7 +10,7 @@ from eval import get_run_metrics
 from tasks import get_task_sampler
 from samplers import get_data_sampler
 from curriculum import Curriculum
-from schema import schema
+from config import get_config
 from models import build_model
 
 import wandb
@@ -145,7 +144,7 @@ def main(args):
             dir=args.out_dir,
             project=args.wandb.project,
             entity=args.wandb.entity,
-            config=args.__dict__,
+            config=dict(args),
             notes=args.wandb.notes,
             name=args.wandb.name,
             resume=True,
@@ -162,8 +161,7 @@ def main(args):
 
 
 if __name__ == "__main__":
-    parser = QuinineArgumentParser(schema=schema)
-    args = parser.parse_quinfig()
+    args = get_config()
     assert args.model.family in ["gpt2", "lstm"]
     print(f"Running with: {args}")
 
@@ -178,6 +176,6 @@ if __name__ == "__main__":
         args.out_dir = out_dir
 
         with open(os.path.join(out_dir, "config.yaml"), "w") as yaml_file:
-            yaml.dump(args.__dict__, yaml_file, default_flow_style=False)
+            yaml.dump(dict(args), yaml_file, default_flow_style=False)
 
     main(args)
