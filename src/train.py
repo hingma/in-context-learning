@@ -162,7 +162,7 @@ def main(args):
 
 if __name__ == "__main__":
     args = get_config()
-    assert args.model.family in ["gpt2", "lstm"]
+    assert args.model.family in ["gpt2", "qwen2.5", "lstm"]
     print(f"Running with: {args}")
 
     if not args.test_run:
