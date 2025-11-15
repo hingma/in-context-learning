@@ -99,7 +99,47 @@ Note: Normalized values divide raw loss by n_dims (20) for easier comparison.
       Model advantage: +98.3% better
 ```
 
-### 6. **OOD Robustness (Cell 24)**
+### 6. **OOD Robustness Summary Table (Cell 20 - NEW!)**
+Added comprehensive summary table after OOD plots:
+
+```
+==================================================================================================
+OOD ROBUSTNESS SUMMARY (with Normalized Values)
+==================================================================================================
+Scenario                            Raw Loss        Normalized      vs Standard          Status         
+--------------------------------------------------------------------------------------------------
+Random Quadrants                    11.1649         0.5582          +4542.1%             ❌ Poor        
+Orthogonal Train Test               0.0509          0.0025          -78.8%               ⚠️  Degraded   
+Overlapping Train Test              0.1518          0.0076          -36.9%               ⚠️  Degraded   
+Half Subspace                       1.0407          0.0520          +332.7%              ❌ Poor        
+Skewed                             17.6777          0.8839          +7250.0%             ❌ Poor        
+--------------------------------------------------------------------------------------------------
+Standard (Reference)                0.2405          0.0120          baseline             ✅ Baseline    
+==================================================================================================
+
+Note: Normalized values = Raw / n_dims (20). Status based on degradation vs standard.
+```
+
+### 7. **Scaling Robustness (Cell 22 - ENHANCED!)**
+**Before:**
+```
+Input (X) Scaling:
+  Scale      Final Loss      vs Standard    
+  ------------------------------------------
+  0.333        0.1954                 -15.0%
+  2.000        4.8295               +2002.3%
+```
+
+**After:**
+```
+Input (X) Scaling:
+  Scale      Raw Loss        Normalized      vs Standard    
+  ---------------------------------------------------------
+  0.333        0.1954          0.0098                 -15.0%
+  2.000        4.8295          0.2148               +2002.3%
+```
+
+### 8. **OOD Robustness (Cell 24)**
 **Before:**
 ```
 🌐 OUT-OF-DISTRIBUTION ROBUSTNESS:
@@ -158,9 +198,26 @@ The normalized value **immediately** shows that Averaging achieves about half th
 3. **Raw shows actual errors** - useful for understanding magnitude
 4. **Consistency matters** - now both notebooks use the same format
 
+## Summary of All Normalizations Added
+
+### Main Changes:
+1. ✅ **Introduction** - Explanation of normalization concept
+2. ✅ **Learning Curve** (Cell 14) - Raw + normalized statistics
+3. ✅ **Baseline Comparison Table** (Cell 18) - Added normalized column
+4. ✅ **OOD Summary Table** (Cell 20) - **NEW** comprehensive table with status indicators
+5. ✅ **Scaling Analysis** (Cell 22) - Added normalized column to X/Y scaling tables
+6. ✅ **Complete Summary** (Cell 24) - All metrics show both raw and normalized
+7. ✅ **Section Headers** - Updated with clarifying notes
+
+### Key Features:
+- 📊 **Dual Display**: Every metric shows both raw and normalized values
+- 🎯 **Status Indicators**: Visual feedback (✅ ⚠️ ❌) for OOD performance
+- 📝 **Clear Notes**: Each section explains what normalization means
+- 🔄 **Consistency**: Matches `eval.ipynb` format and conventions
+
 ## Files Modified
 
-- `eval_colab.ipynb` - Added normalization throughout
+- `eval_colab.ipynb` - Added normalization throughout (7 major sections updated)
 - `averaging_model_analysis.md` - Original analysis document
 - `NORMALIZATION_UPDATE.md` - This document
 
