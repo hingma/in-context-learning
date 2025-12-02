@@ -29,6 +29,7 @@ def build_model(conf):
             n_layer=conf.n_layer,
             n_head=conf.n_head,
         )
+        
     else:
         raise NotImplementedError
 
