@@ -119,7 +119,7 @@ if __name__ == "__main__":
     script_dir = Path(__file__).parent
     metrics_file = script_dir / "metrics.json"
     gpt2_file = script_dir / "metrics_gpt2.json"
-    diffusion_file = script_dir / "metrics_diff.json"
+    new_file = script_dir / "metrics_diff_decoder.json"
     
     # Create a backup of the original metrics.json
     backup_file = script_dir / "metrics_backup.json"
@@ -130,8 +130,8 @@ if __name__ == "__main__":
         json.dump(backup_data, f, indent=2)
     
     # Merge the diffusion model metrics
-    diffusion_model_name = "diffusion_encoder_embd=256_layer=12_head=8_timesteps=100"
-    merge_diffusion_metrics(metrics_file, diffusion_file, diffusion_model_name)
+    diffusion_model_name = "diffusion_decoder_embd=256_layer=12_head=8_timesteps=100"
+    merge_diffusion_metrics(metrics_file, new_file, diffusion_model_name)
     
     print(f"\nBackup of original metrics saved to: {backup_file}")
 
